@@ -44,7 +44,7 @@ public class Member {
     private UUID modifyId;
 
     @Column(name = "modify_dt")
-    private LocalDateTime midifyDt;
+    private LocalDateTime modifyDt;
 
     @Column(name = "salt_key", length = 14, nullable = false)
     private String saltKey;
@@ -65,5 +65,21 @@ public class Member {
         this.phone = phone;
         this.saltKey = saltKey;
         this.flag = flag;
+    }
+
+    public Member(String email, String name, String password, String phone, String s, String flag) {
+        UUID uuid = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+        this.id=uuid;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+        this.saltKey = saltKey;
+        this.flag = flag;
+        this.regId = uuid;
+        this.modifyId = uuid;
+        this.regDt = now;
+        this.modifyDt = now;
     }
 }

@@ -22,25 +22,13 @@ public class MemberController {
     MemberService memberService;
 
 
+    @Operation(summary =" 회원 등록 ", description = "회원 가입")
     @PostMapping
     public ResponseEntity<Member> create(@RequestBody MemberRequest request){
-        UUID uuid =  UUID.randomUUID();
-        Member member = new Member(
-                uuid,
-                request.email(),
-                request.name(),
-                request.password(),
-                request.phone(),
-                uuid,
-                LocalDateTime.now(),
-                uuid,
-                LocalDateTime.now(),
-                request.saltKey(),
-                request.flag()
-        );
-        Member rslt = memberService.save(member);
+        Member rslt = memberService.save(request);
         return new ResponseEntity<Member>(200, rslt, rslt != null ? 1L : 0L); //내부적으로 잭슨이 동작함
     }
+    @Operation(summary =" 회원 조회 ", description = "모든 회원 조회")
     @GetMapping
     public ResponseEntity<List<Member>> findAll() {
         List<Member> members =  memberService.findAll();
@@ -50,22 +38,11 @@ public class MemberController {
     @Operation(summary =" 회원 수정 ", description = "회원 수정 메소드")
     @PutMapping("{id}") //수정
     public ResponseEntity<Member> update(@RequestBody MemberRequest request, @PathVariable("id") String id){
-        Member member = new Member(
-                UUID.fromString(id),
-                request.email(),
-                request.name(),
-                request.password(),
-                request.phone(),
-                UUID.fromString(id),
-                LocalDateTime.now(),
-                UUID.fromString(id),
-                LocalDateTime.now(),
-                request.saltKey(),
-                request.flag());
-        Member rslt = memberService.save(member);
+        Member rslt = memberService.update(id, request);
         return new ResponseEntity<Member>(200, rslt, rslt != null ? 1L : 0L); //삽입과 업데이트가 같은 함수를 사용
 
     }
+    @Operation(summary =" 회원 탈퇴 ", description = "회원 삭제 메소드")
     @DeleteMapping("{id}")
     public ResponseEntity<Member> delete(@PathVariable("id") String id){
         memberService.deleteById(UUID.fromString(id));
