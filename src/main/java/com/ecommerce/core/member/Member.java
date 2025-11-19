@@ -1,5 +1,6 @@
 package com.ecommerce.core.member;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class Member {
     @Id
     private UUID id;
-
+    @Schema(description = "유저의 이메일")
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
@@ -38,6 +39,7 @@ public class Member {
     @Column(name = "reg_dt", nullable = false)
     private LocalDateTime regDt;
 
+    @Schema(description = "수정한 사람의 ID")
     @Column(name = "modify_id")
     private UUID modifyId;
 

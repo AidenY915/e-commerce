@@ -1,11 +1,13 @@
 package com.ecommerce.core.controller;
 
+import com.ecommerce.core.common.ResponseEntity;
 import com.ecommerce.core.member.Member;
-import com.ecommerce.core.member.MemberRepository;
 import com.ecommerce.core.member.MemberRequest;
+import com.ecommerce.core.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -17,15 +19,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MemberController {
     @Autowired
-    private final MemberRepository memberRepository;
+    MemberService memberService;
 
 
-    @GetMapping
-    public List<Member> findAll() {
-        return memberRepository.findAll();
-    }
     @PostMapping
-    public Member create(@RequestBody MemberRequest request){
+    public ResponseEntity<Member> create(@RequestBody MemberRequest request){
         UUID uuid =  UUID.randomUUID();
         Member member = new Member(
                 uuid,
@@ -40,12 +38,18 @@ public class MemberController {
                 request.saltKey(),
                 request.flag()
         );
-        memberRepository.save(member);
-        return member; //내부적으로 잭슨이 동작함
+        Member rslt = memberService.save(member);
+        return new ResponseEntity<Member>(200, rslt, rslt != null ? 1L : 0L); //내부적으로 잭슨이 동작함
+    }
+    @GetMapping
+    public ResponseEntity<List<Member>> findAll() {
+        List<Member> members =  memberService.findAll();
+        Long count = (long)(members.size());
+        return new ResponseEntity<List<Member>>(HttpStatus.OK.value(), members, count);
     }
     @Operation(summary =" 회원 수정 ", description = "회원 수정 메소드")
     @PutMapping("{id}") //수정
-    public Member update(@RequestBody MemberRequest request, @PathVariable("id") String id){
+    public ResponseEntity<Member> update(@RequestBody MemberRequest request, @PathVariable("id") String id){
         Member member = new Member(
                 UUID.fromString(id),
                 request.email(),
@@ -58,11 +62,13 @@ public class MemberController {
                 LocalDateTime.now(),
                 request.saltKey(),
                 request.flag());
-        return memberRepository.save(member); //삽입과 업데이트가 같은 함수를 사용
+        Member rslt = memberService.save(member);
+        return new ResponseEntity<Member>(200, rslt, rslt != null ? 1L : 0L); //삽입과 업데이트가 같은 함수를 사용
 
     }
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") String id){
-        memberRepository.deleteById(UUID.fromString(id));
+    public ResponseEntity<Member> delete(@PathVariable("id") String id){
+        memberService.deleteById(UUID.fromString(id));
+        return new ResponseEntity<Member>(200, null, 0L);
     }
 }
