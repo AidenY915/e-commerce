@@ -1,4 +1,4 @@
-package com.ecommerce.core.member;
+package com.ecommerce.core.member.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -15,7 +15,6 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "member", schema = "public")
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member {
     @Id
@@ -51,7 +50,21 @@ public class Member {
 
     private String flag;
 
-    public Member(UUID id,
+    private Member(String flag, String saltKey, LocalDateTime modifyDt, UUID modifyId, LocalDateTime regDt, UUID regId, String phone, String password, String name, String email, UUID id) {
+        this.flag = flag;
+        this.saltKey = saltKey;
+        this.modifyDt = modifyDt;
+        this.modifyId = modifyId;
+        this.regDt = regDt;
+        this.regId = regId;
+        this.phone = phone;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.id = id;
+    }
+
+    private Member(UUID id,
                  String email,
                  String name,
                  String password,
@@ -67,7 +80,7 @@ public class Member {
         this.flag = flag;
     }
 
-    public Member(String email, String name, String password, String phone, String s, String flag) {
+    private Member(String email, String name, String password, String phone, String saltKey, String flag) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         this.id=uuid;
@@ -82,4 +95,17 @@ public class Member {
         this.regDt = now;
         this.modifyDt = now;
     }
+
+    public static Member create(String email, String name, String password, String phone, String saltKey, String flag) {
+        return new Member(email, name, password, phone, saltKey, flag);
+    }
+
+
+    public void update(String email, String name, String password, String phone){
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+    }
+
 }

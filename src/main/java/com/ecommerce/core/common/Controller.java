@@ -1,4 +1,4 @@
-package com.ecommerce.core.controller;
+package com.ecommerce.core.common;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
